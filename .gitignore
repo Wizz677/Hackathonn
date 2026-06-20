@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+backend/.venv/
+.pytest_cache/
+*.egg-info/
+
+# Node
+node_modules/
+frontend/dist/
+.vite/
+
+# Local
+*.sqlite3
+*.db
+.DS_Store
