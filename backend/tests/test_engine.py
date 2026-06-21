@@ -244,6 +244,43 @@ def test_three_alerts_escalate_to_critical():
     assert len(out["alerts"]) >= 3
 
 
+def test_revoked_past_expiry_is_not_critical():
+    """A revoked (closed) record must never escalate, even if long past expiry.
+
+    Regression: previously a stale-but-revoked high-sensitivity record was
+    mis-scored CRITICAL with a 'REVOKE IMMEDIATELY' recommendation.
+    """
+    row = {
+        "exception_id": "EXC-REV",
+        "type": "data_access",
+        "justification": "Migration cutover access for project Helios, decommissioned",
+        "start_date": "2025-01-07",
+        "end_date": "2025-02-27",  # ~13 months before EVAL
+        "status": "REVOKED",
+        "renewal_count": 0,
+    }
+    out = analyze_record(row, EVAL)
+    assert out["computed_risk_level"] == "LOW"
+    assert "REVOKE IMMEDIATELY" not in out["recommendation"]
+    assert "revoked" in out["recommendation"].lower()
+
+
+def test_renewed_past_old_expiry_is_not_overdue():
+    """A renewed record whose previous end_date is past must not read as overdue."""
+    row = {
+        "exception_id": "EXC-RENEW",
+        "type": "admin_access",
+        "justification": "Quarterly-reviewed admin for payments reconciliation job",
+        "start_date": "2024-06-01",
+        "end_date": "2025-02-01",
+        "status": "RENEWED",
+        "renewal_count": 3,
+    }
+    out = analyze_record(row, EVAL)
+    assert out["computed_risk_level"] != "CRITICAL"
+    assert "REVOKE IMMEDIATELY" not in out["recommendation"]
+
+
 def test_healthy_record_no_action():
     row = {
         "exception_id": "EXC-OK",

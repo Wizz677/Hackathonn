@@ -348,15 +348,27 @@ def escalate_risk(
         exception that is ALSO expired-not-revoked or badly overdue, or for any
         record on which three or more alerts stack.
     """
+    # --- Closed / revoked: no live exposure, never escalate ----------------
+    # A revoked exception is closed, so it cannot be "overdue" or CRITICAL even
+    # if its old end_date is long past. This MUST come before the escalation
+    # checks, otherwise a stale-but-revoked record is wrongly flagged CRITICAL.
+    if rec.status == "REVOKED":
+        return "LOW"
+
     s_rank = RISK_ORDER[sensitivity(rec)]
     high_sensitivity = s_rank >= RISK_ORDER["HIGH"]
     elevated = "ELEVATED_PRIVILEGE" in alert_codes
 
-    expired = is_expired(rec, eval_date)
     overdue_months = (
-        months_between(rec.end_date, eval_date) if expired and rec.end_date else 0
+        months_between(rec.end_date, eval_date)
+        if is_expired(rec, eval_date) and rec.end_date
+        else 0
     )
-    badly_overdue = overdue_months >= 3  # ~90+ days past expiry
+    # Overdue only escalates when it is a *live* problem — i.e. the record
+    # actually raised OVERDUE_RENEWAL (which itself requires an unresolved status
+    # of ACTIVE / EXPIRED / PENDING). This keeps RENEWED records, whose old
+    # end_date is in the past, from being treated as badly overdue.
+    badly_overdue = "OVERDUE_RENEWAL" in alert_codes and overdue_months >= 3
     expired_not_revoked = "EXPIRED_NOT_REVOKED" in alert_codes
 
     # Genuine problems only (ELEVATED_PRIVILEGE excluded — see ANOMALY_CODES).
@@ -368,10 +380,6 @@ def escalate_risk(
         return "CRITICAL"
     if len(alert_codes) >= 3:
         return "CRITICAL"
-
-    # --- Closed / revoked: no live exposure --------------------------------
-    if rec.status == "REVOKED":
-        return "LOW"
 
     # --- Healthy / within policy: one tier BELOW sensitivity ---------------
     if not anomalies:
@@ -403,22 +411,35 @@ def build_recommendation(
     alert_codes: set[str],
 ) -> str:
     """One actionable sentence for the record (spec §3d)."""
-    expired = is_expired(rec, eval_date)
+    # Closed / resolved states need no action — never tell a user to renew or
+    # revoke a record that is already revoked or freshly renewed.
+    if rec.status == "REVOKED":
+        return "No action needed - exception is revoked (closed)"
+    if rec.status == "RENEWED":
+        return "No action needed - recently renewed"
+
+    # "Overdue" only counts when it is a live problem (OVERDUE_RENEWAL fired).
+    overdue = "OVERDUE_RENEWAL" in alert_codes
+    expired_not_revoked = "EXPIRED_NOT_REVOKED" in alert_codes
     overdue_months = (
-        months_between(rec.end_date, eval_date) if expired and rec.end_date else 0
+        months_between(rec.end_date, eval_date) if overdue and rec.end_date else 0
     )
 
     # CRITICAL and expired/overdue -> revoke now.
-    if computed_risk == "CRITICAL" and (expired or overdue_months > 0):
+    if computed_risk == "CRITICAL" and (expired_not_revoked or overdue):
         return (
             f"REVOKE IMMEDIATELY - was temporary, now {overdue_months} months overdue"
         )
 
     # Overdue but not critical -> ask for renewal justification.
-    if expired:
+    if overdue:
         return (
             f"Request renewal justification - {overdue_months} months old, needs review"
         )
+
+    # A stalled review needs an approval nudge.
+    if "STALLED_REVIEW" in alert_codes:
+        return "Escalate review - approval has stalled past SLA"
 
     # Long-running (still active) waiver -> accelerate remediation.
     if "LONG_DURATION" in alert_codes:
