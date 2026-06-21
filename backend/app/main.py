@@ -15,10 +15,12 @@ import io
 import json
 import time
 from datetime import date
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, Response
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 
 from app import engine, exporters, report, seed
@@ -436,3 +438,15 @@ def export_csv(db: Session = Depends(get_db)) -> Response:
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=analyzed_exceptions.csv"},
     )
+
+
+# ---------------------------------------------------------------------------
+# Serve the built frontend (production / Docker single-service deploy)
+# ---------------------------------------------------------------------------
+# In production we ship one service: this API plus the compiled React SPA. The
+# mount is added LAST so every /api/* route above takes precedence; it only
+# activates when a build exists (frontend/dist), so local dev — where Vite
+# serves the UI on :5173 — is unaffected.
+_STATIC_DIR = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+if _STATIC_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=str(_STATIC_DIR), html=True), name="frontend")

@@ -1,0 +1,10 @@
+# Keep the build context small and the image clean.
+**/node_modules
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+backend/*.db
+frontend/dist
+.git
+.DS_Store

@@ -96,6 +96,19 @@ at your database:
 `DATABASE_URL=postgresql+psycopg://user:pass@host/db uvicorn app.main:app`.
 (Not wired to a Postgres instance in this repo; it has only been exercised on SQLite.)
 
+## Deploy (single service)
+
+The repo ships a multi-stage `Dockerfile` that builds the React SPA and serves it
+together with the API from one container — one URL, no CORS, self-contained.
+`main.py` mounts the compiled `frontend/dist` at `/` (added after all `/api/*`
+routes, so the API always takes precedence); the mount is skipped when no build
+is present, so local dev is unaffected.
+
+On **Render**: New → Web Service → connect the repo → Language **Docker** (the
+Dockerfile is auto-detected) → Free instance → Create. No build/start command
+needed; the container binds to `$PORT`. The app reseeds ~220 records on each
+boot (Render's free disk is ephemeral).
+
 ---
 
 ## The acceptance test (spec §10)
