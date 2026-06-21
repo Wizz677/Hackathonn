@@ -32,8 +32,7 @@ export default function Upload({ onDone, goRegistry }) {
           Provide a <span className="mono text-slate-300">.csv</span> in the
           schema (<span className="mono text-slate-300">exception_id, type,
           requester, approver, justification, start_date, end_date, status,
-          risk_level</span>). Minimum <b>100 records</b>. The engine analyzes
-          every row on upload.
+          risk_level</span>). The engine analyzes every row on upload.
         </p>
 
         <div className="flex flex-wrap items-center gap-3">

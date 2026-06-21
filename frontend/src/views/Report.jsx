@@ -33,12 +33,9 @@ export default function Report({ onTiming }) {
         >
           ↻ Regenerate
         </button>
-        <a
-          href={api.reportDownloadUrl}
-          className="rounded-lg border border-slate-700 bg-slate-800/60 px-4 py-1.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-700"
-        >
-          ↓ Download report (.txt)
-        </a>
+
+        <DownloadControl />
+
         {data && (
           <span className="text-xs text-slate-500">
             Generated in{" "}
@@ -57,6 +54,42 @@ export default function Report({ onTiming }) {
           </pre>
         </Card>
       )}
+    </div>
+  );
+}
+
+// Download control offering three offline-generated formats; PDF is the default.
+const FORMATS = [
+  { id: "pdf", label: "PDF", hint: "formatted for management", url: api.reportPdfUrl },
+  { id: "xlsx", label: "Excel (.xlsx)", hint: "records + summary", url: api.reportXlsxUrl },
+  { id: "txt", label: "Plain text (.txt)", hint: "literal report", url: api.reportTxtUrl },
+];
+
+function DownloadControl() {
+  const [fmt, setFmt] = useState("pdf");
+  const current = FORMATS.find((f) => f.id === fmt) || FORMATS[0];
+  return (
+    <div className="flex items-center gap-2">
+      <select
+        value={fmt}
+        onChange={(e) => setFmt(e.target.value)}
+        className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-sm text-slate-200 outline-none focus:border-teal-500/50"
+        aria-label="Download format"
+      >
+        {FORMATS.map((f) => (
+          <option key={f.id} value={f.id}>
+            {f.label}
+          </option>
+        ))}
+      </select>
+      <a
+        href={current.url}
+        download
+        className="rounded-lg border border-slate-700 bg-slate-800/60 px-4 py-1.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-700"
+        title={`Download as ${current.label} — ${current.hint}`}
+      >
+        ↓ Download {current.label}
+      </a>
     </div>
   );
 }

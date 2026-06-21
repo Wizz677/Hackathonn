@@ -47,7 +47,9 @@ export const api = {
   },
 
   // Direct download URLs (anchor href targets).
-  reportDownloadUrl: `${BASE}/report/download`,
+  reportPdfUrl: `${BASE}/report.pdf`,
+  reportXlsxUrl: `${BASE}/report.xlsx`,
+  reportTxtUrl: `${BASE}/report/download`,
   exportJsonUrl: `${BASE}/export.json`,
   exportCsvUrl: `${BASE}/export.csv`,
 };

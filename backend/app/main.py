@@ -21,7 +21,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import PlainTextResponse, Response
 from sqlalchemy.orm import Session
 
-from app import engine, report, seed
+from app import engine, exporters, report, seed
 from app.db import get_db, init_db
 from app.models import ActivityLog, ExceptionRecord
 from app.schemas import LifecycleAction, SettingsBody
@@ -68,6 +68,9 @@ INPUT_COLUMNS = [
     "risk_level",
     "renewal_count",
 ]
+
+# Columns a valid upload must declare (renewal_count is optional, spec §2).
+REQUIRED_COLUMNS = [c for c in INPUT_COLUMNS if c != "renewal_count"]
 
 
 def _orm_to_raw(row: ExceptionRecord) -> dict:
@@ -284,11 +287,18 @@ async def upload_csv(
         text = raw_bytes.decode("latin-1")
 
     reader = csv.DictReader(io.StringIO(text))
+    fieldnames = [(f or "").strip() for f in (reader.fieldnames or [])]
     rows = [dict(r) for r in reader]
 
-    if len(rows) < 100:
+    # Lightweight validation only — reject genuinely bad input, not small files.
+    # The engine analyzes whatever number of valid records is uploaded.
+    if not rows:
+        raise HTTPException(400, "CSV is empty — no records to analyze.")
+    missing = [c for c in REQUIRED_COLUMNS if c not in fieldnames]
+    if missing:
         raise HTTPException(
-            400, f"CSV must contain at least 100 records (got {len(rows)})"
+            400,
+            "CSV is missing required column(s): " + ", ".join(missing),
         )
 
     if mode == "replace":
@@ -340,11 +350,42 @@ def get_report(db: Session = Depends(get_db)) -> dict:
 
 @app.get("/api/report/download")
 def download_report(db: Session = Depends(get_db)) -> PlainTextResponse:
+    """Plain-text portfolio report (.txt) — the literal §5 format."""
     records = _all_analyzed(db)
     text = report.build_report(records, eval_date())
     return PlainTextResponse(
         text,
         headers={"Content-Disposition": "attachment; filename=portfolio_report.txt"},
+    )
+
+
+@app.get("/api/report.pdf")
+def download_report_pdf(db: Session = Depends(get_db)) -> Response:
+    """Clean, management-ready PDF rendering of the portfolio report."""
+    records = _all_analyzed(db)
+    pdf = exporters.report_pdf_bytes(records, eval_date())
+    return Response(
+        pdf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "attachment; filename=portfolio_report.pdf"
+        },
+    )
+
+
+@app.get("/api/report.xlsx")
+def download_report_xlsx(db: Session = Depends(get_db)) -> Response:
+    """Excel workbook: analyzed records sheet + a summary sheet."""
+    records = _all_analyzed(db)
+    xlsx = exporters.analyzed_xlsx_bytes(records, eval_date())
+    return Response(
+        xlsx,
+        media_type=(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        ),
+        headers={
+            "Content-Disposition": "attachment; filename=exception_portfolio.xlsx"
+        },
     )
 
 

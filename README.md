@@ -36,7 +36,8 @@ thin presentation layer over that engine.
 ```
 /backend (Python + FastAPI + SQLAlchemy over SQLite, PG-compatible schema)
   app/engine.py    PURE risk/lifecycle logic — no I/O, no clock (the core, unit-tested)
-  app/report.py    PURE §5 portfolio report builder
+  app/report.py    PURE §5 portfolio report builder (plain text)
+  app/exporters.py offline PDF (reportlab) + Excel (openpyxl) report renderers
   app/seed.py      deterministic ~220-record synthetic dataset (+ sample CSV)
   app/models.py    SQLAlchemy models (exceptions + activity_log)
   app/schemas.py   Pydantic API shapes
@@ -127,8 +128,9 @@ pinned by `test_no_renewal_suppressed_when_expired` and
 | Actionable recommendations | `engine.build_recommendation` |
 | Compliance / CIA mapping | `engine.framework_tags`, `engine.cia_tags` |
 | Lifecycle actions (Renew / Revoke + log) | `POST /api/exceptions/{id}/action`, `ActivityLog`, `Detail.jsx` |
-| CSV ingestion (≥100 validation) | `POST /api/upload`, `Upload.jsx` |
+| CSV ingestion (analyzes any row count; validates schema) | `POST /api/upload`, `Upload.jsx` |
 | One-click portfolio / audit report | `report.py`, `GET /api/report`, `Report.jsx` |
+| Report download — PDF / Excel / text | `exporters.py`, `GET /api/report.pdf`, `/api/report.xlsx`, `/api/report/download` |
 | Analyzed-record export (JSON/CSV) | `GET /api/export.json`, `/api/export.csv` |
 | Time-travel demo (configurable eval date) | `STATE.evaluation_date`, `POST /api/settings`, header date control |
 
