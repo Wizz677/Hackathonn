@@ -1,0 +1,16 @@
+# Render Blueprint — one Docker web service that builds the React UI and serves
+# it together with the FastAPI API (one URL, no CORS, self-contained).
+#
+# Deploy: Render Dashboard -> Blueprints -> "New Blueprint Instance" -> pick this
+# repo -> Apply. Render reads this file and provisions everything; no web form.
+services:
+  - type: web
+    name: sunset
+    runtime: docker
+    plan: free
+    region: oregon
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeploy: true
