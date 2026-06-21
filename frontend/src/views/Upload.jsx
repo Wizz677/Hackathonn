@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { api } from "../api";
-import { Card, RiskBadge, typeLabel } from "../ui.jsx";
+import { Card, ExactJsonPanel, RiskBadge, typeLabel } from "../ui.jsx";
 
 export default function Upload({ onDone, goRegistry }) {
   const [file, setFile] = useState(null);
   const [mode, setMode] = useState("replace");
   const [result, setResult] = useState(null);
+  const [selected, setSelected] = useState(null);
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -14,6 +15,7 @@ export default function Upload({ onDone, goRegistry }) {
     setBusy(true);
     setError(null);
     setResult(null);
+    setSelected(null);
     try {
       const r = await api.upload(file, mode);
       setResult(r);
@@ -24,6 +26,9 @@ export default function Upload({ onDone, goRegistry }) {
       setBusy(false);
     }
   };
+
+  // The record whose exact JSON is shown — the clicked row, else the first.
+  const selectedRec = selected || result?.records?.[0] || null;
 
   return (
     <div className="space-y-5">
@@ -74,62 +79,81 @@ export default function Upload({ onDone, goRegistry }) {
       </Card>
 
       {result && (
-        <Card
-          title={`Analyzed ${result.records.length} of ${result.received} received (${result.mode})`}
-          action={
-            <button
-              onClick={goRegistry}
-              className="text-xs text-teal-300 hover:underline"
-            >
-              View full registry →
-            </button>
-          }
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[560px] text-sm">
-              <thead>
-                <tr className="text-left text-xs uppercase tracking-wider text-slate-500">
-                  <th className="py-2 pr-3">ID</th>
-                  <th className="py-2 pr-3">Type</th>
-                  <th className="py-2 pr-3">Risk</th>
-                  <th className="py-2 pr-3">Recommendation</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800">
-                {result.records.slice(0, 50).map((r) => (
-                  <tr key={r.exception_id}>
-                    <td className="mono py-2 pr-3 text-slate-300">
-                      {r.exception_id}
-                    </td>
-                    <td className="py-2 pr-3 text-slate-300">
-                      {typeLabel(r.type)}
-                    </td>
-                    <td className="py-2 pr-3">
-                      <RiskBadge level={r.computed_risk_level} />
-                    </td>
-                    <td className="py-2 pr-3 text-slate-400">
-                      {r.recommendation}
-                    </td>
+        <div className="grid gap-5 lg:grid-cols-3">
+          <Card
+            className="lg:col-span-2"
+            title={`Analyzed ${result.records.length} of ${result.received} received (${result.mode})`}
+            action={
+              <button
+                onClick={goRegistry}
+                className="text-xs text-teal-300 hover:underline"
+              >
+                View full registry →
+              </button>
+            }
+          >
+            <p className="mb-2 text-xs text-slate-500">
+              Select a row to see its exact per-record JSON →
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
+                <thead>
+                  <tr className="text-left text-xs uppercase tracking-wider text-slate-500">
+                    <th className="py-2 pr-3">ID</th>
+                    <th className="py-2 pr-3">Type</th>
+                    <th className="py-2 pr-3">Risk</th>
+                    <th className="py-2 pr-3">Recommendation</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-4 flex gap-3">
-            <a
-              href={api.exportJsonUrl}
-              className="text-sm text-teal-300 hover:underline"
-            >
-              ↓ Download analyzed JSON
-            </a>
-            <a
-              href={api.exportCsvUrl}
-              className="text-sm text-teal-300 hover:underline"
-            >
-              ↓ Download analyzed CSV
-            </a>
-          </div>
-        </Card>
+                </thead>
+                <tbody className="divide-y divide-slate-800">
+                  {result.records.slice(0, 50).map((r) => (
+                    <tr
+                      key={r.exception_id}
+                      onClick={() => setSelected(r)}
+                      className={`cursor-pointer transition ${
+                        selectedRec?.exception_id === r.exception_id
+                          ? "bg-teal-500/10"
+                          : "hover:bg-slate-800/40"
+                      }`}
+                    >
+                      <td className="mono py-2 pr-3 text-slate-300">
+                        {r.exception_id}
+                      </td>
+                      <td className="py-2 pr-3 text-slate-300">
+                        {typeLabel(r.type)}
+                      </td>
+                      <td className="py-2 pr-3">
+                        <RiskBadge level={r.computed_risk_level} />
+                      </td>
+                      <td className="py-2 pr-3 text-slate-400">
+                        {r.recommendation}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mt-4 flex gap-3">
+              <a
+                href={api.exportJsonUrl}
+                className="text-sm text-teal-300 hover:underline"
+              >
+                ↓ Download analyzed JSON
+              </a>
+              <a
+                href={api.exportCsvUrl}
+                className="text-sm text-teal-300 hover:underline"
+              >
+                ↓ Download analyzed CSV
+              </a>
+            </div>
+          </Card>
+
+          <ExactJsonPanel
+            record={selectedRec}
+            className="lg:sticky lg:top-4 lg:self-start"
+          />
+        </div>
       )}
     </div>
   );

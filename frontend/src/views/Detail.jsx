@@ -3,6 +3,7 @@ import { api } from "../api";
 import {
   Badge,
   Card,
+  ExactJsonPanel,
   RiskBadge,
   StatusBadge,
   Spinner,
@@ -100,6 +101,7 @@ export default function Detail({ id, onBack, onChanged }) {
           )}
         </Card>
 
+        <div className="space-y-5">
         <Card title="Lifecycle actions">
           <div className="flex flex-col gap-2">
             <button
@@ -146,6 +148,9 @@ export default function Detail({ id, onBack, onChanged }) {
             <p className="text-xs text-slate-600">No actions yet.</p>
           )}
         </Card>
+
+          <ExactJsonPanel record={rec} />
+        </div>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">

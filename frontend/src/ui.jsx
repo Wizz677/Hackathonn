@@ -91,3 +91,44 @@ export function Spinner({ label = "Loading…" }) {
 export function typeLabel(t) {
   return TYPE_LABELS[t] || t;
 }
+
+// Project an analyzed record to the brief's exact §4 per-record contract:
+// exactly { exception_id, risk_level, alerts[], recommendation }, where
+// risk_level is the engine's COMPUTED risk (mirrors engine.acceptance_view).
+// Pure client-side projection of the already-fetched record — no engine change,
+// no extra network call.
+export function exactRecord(r) {
+  return {
+    exception_id: r.exception_id,
+    risk_level: r.computed_risk_level,
+    alerts: r.alerts ?? [],
+    recommendation: r.recommendation,
+  };
+}
+
+// Side panel rendering the exact 4-key per-record JSON in a dark console style.
+export function ExactJsonPanel({ record, className = "" }) {
+  if (!record) return null;
+  const json = JSON.stringify(exactRecord(record), null, 2);
+  return (
+    <Card
+      title="Exact Per-Record JSON"
+      className={className}
+      action={
+        <span
+          title="Matches the brief's exact 4-key per-record output contract"
+          className="inline-flex items-center gap-1 text-[11px] font-medium text-teal-300"
+        >
+          <span className="grid h-4 w-4 place-items-center rounded-full bg-teal-500/20 text-[10px] leading-none text-teal-300">
+            ✓
+          </span>
+          matches brief format
+        </span>
+      }
+    >
+      <pre className="mono overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/70 p-3 text-[12.5px] leading-relaxed text-slate-200">
+        {json}
+      </pre>
+    </Card>
+  );
+}
