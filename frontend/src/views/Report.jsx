@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api";
 import { Card, Spinner } from "../ui.jsx";
 
-export default function Report({ onTiming }) {
+export default function Report() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
 
@@ -10,10 +10,7 @@ export default function Report({ onTiming }) {
     setData(null);
     api
       .report()
-      .then((d) => {
-        setData(d);
-        onTiming?.(d.generated_seconds);
-      })
+      .then((d) => setData(d))
       .catch((e) => setError(e.message));
   };
 
@@ -39,8 +36,7 @@ export default function Report({ onTiming }) {
         {data && (
           <span className="text-xs text-slate-500">
             Generated in{" "}
-            <span className="text-teal-300">{data.generated_seconds}s</span> —
-            satisfies the “audit in seconds” criterion
+            <span className="text-teal-300">{data.generated_seconds}s</span>
           </span>
         )}
       </div>
