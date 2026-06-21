@@ -1,0 +1,221 @@
+exception_id,type,requester,approver,justification,start_date,end_date,status,risk_level,renewal_count
+EXC-00145,admin_access,USR-1234,manager-001,"Prod admin to debug payment gateway latency, INC-4471",2025-11-15,2025-12-15,ACTIVE,HIGH,0
+EXC-00002,encryption_waiver,USR-7912,manager-003,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-03-25,2026-10-13,ACTIVE,LOW,0
+EXC-00003,admin_access,USR-8359,manager-038,"Break-glass DB admin for incident INC-9028 remediation, scoped to prod-eu",2025-02-25,2026-01-29,ACTIVE,HIGH,0
+EXC-00004,firewall_rule_open,USR-4527,manager-022,Open 8443 to monitoring collector during migration window CR-5674,2024-02-21,2026-05-19,ACTIVE,HIGH,0
+EXC-00005,admin_access,USR-9785,manager-008,"Temporary root on build host to rotate expired signing keys, ticket OPS-811",2026-01-02,2026-09-09,ACTIVE,HIGH,0
+EXC-00006,dev_environment,USR-4733,manager-019,"Isolated CI runner sandbox for integration tests, no prod data access",2025-09-04,2025-10-08,ACTIVE,MEDIUM,2
+EXC-00007,dev_environment,USR-6820,manager-014,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-6077",2026-01-19,2026-07-01,PENDING,MEDIUM,1
+EXC-00008,data_access,USR-3677,manager-030,Read access to anonymized analytics warehouse for Q8851 revenue reporting,2022-11-16,2026-05-31,ACTIVE,HIGH,0
+EXC-00009,firewall_rule_open,USR-1525,manager-021,Open 8443 to monitoring collector during migration window CR-1016,2024-04-11,2026-08-13,ACTIVE,LOW,2
+EXC-00010,firewall_rule_open,USR-8517,manager-010,see email,2025-07-04,2026-05-26,ACTIVE,HIGH,2
+EXC-00011,firewall_rule_open,USR-4593,manager-009,Open 8443 to monitoring collector during migration window CR-9660,2025-03-07,2025-12-24,ACTIVE,HIGH,0
+EXC-00012,encryption_waiver,USR-7304,manager-025,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-01-19,2026-05-31,ACTIVE,LOW,0
+EXC-00013,encryption_waiver,USR-6573,manager-008,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2025-12-30,2026-07-22,ACTIVE,LOW,2
+EXC-00014,firewall_rule_open,USR-5889,manager-033,Allow vendor SFTP egress to partner 10.4.8417.0/24 for nightly batch,2026-03-23,2026-10-22,ACTIVE,HIGH,0
+EXC-00015,encryption_waiver,USR-1319,manager-008,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2024-01-05,2026-07-01,ACTIVE,HIGH,2
+EXC-00016,dev_environment,USR-8962,manager-005,"Isolated CI runner sandbox for integration tests, no prod data access",2026-02-09,2026-05-25,PENDING,LOW,0
+EXC-00017,dev_environment,USR-7932,manager-014,"Isolated CI runner sandbox for integration tests, no prod data access",2026-01-28,2026-10-17,ACTIVE,HIGH,1
+EXC-00018,dev_environment,USR-8397,manager-008,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-7277",2022-05-25,2026-07-05,ACTIVE,MEDIUM,0
+EXC-00019,firewall_rule_open,USR-1964,manager-015,Allow vendor SFTP egress to partner 10.4.217.0/24 for nightly batch,2026-03-27,2026-10-23,ACTIVE,LOW,2
+EXC-00020,admin_access,USR-3167,manager-037,"Temporary root on build host to rotate expired signing keys, ticket OPS-8053",2026-03-09,2026-09-30,ACTIVE,LOW,2
+EXC-00021,encryption_waiver,USR-7939,manager-027,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2025-02-19,2025-12-26,ACTIVE,LOW,1
+EXC-00022,firewall_rule_open,USR-5073,manager-013,Open 8443 to monitoring collector during migration window CR-5659,2022-09-04,2026-05-13,ACTIVE,LOW,0
+EXC-00023,admin_access,USR-2604,manager-004,"Break-glass DB admin for incident INC-1335 remediation, scoped to prod-eu",2025-02-13,2025-11-06,ACTIVE,MEDIUM,0
+EXC-00024,data_access,USR-4502,manager-026,Read access to anonymized analytics warehouse for Q6758 revenue reporting,2026-02-02,2026-09-15,ACTIVE,LOW,0
+EXC-00025,dev_environment,USR-8973,manager-010,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-4773",2026-02-10,2026-10-04,ACTIVE,MEDIUM,1
+EXC-00026,admin_access,USR-8811,manager-033,"Temporary root on build host to rotate expired signing keys, ticket OPS-1036",2026-03-30,2026-10-11,ACTIVE,LOW,2
+EXC-00027,dev_environment,USR-4853,manager-026,"Isolated CI runner sandbox for integration tests, no prod data access",2026-01-19,2026-06-01,ACTIVE,LOW,2
+EXC-00028,admin_access,USR-9565,manager-021,"Break-glass DB admin for incident INC-6968 remediation, scoped to prod-eu",2026-01-11,2026-10-11,PENDING,LOW,2
+EXC-00029,dev_environment,USR-5915,manager-030,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-2244",2023-01-14,2026-07-21,ACTIVE,MEDIUM,0
+EXC-00030,firewall_rule_open,USR-9288,manager-017,Allow vendor SFTP egress to partner 10.4.1300.0/24 for nightly batch,2026-01-27,2026-07-08,ACTIVE,HIGH,1
+EXC-00031,admin_access,USR-5956,manager-040,"Temporary root on build host to rotate expired signing keys, ticket OPS-2684",2026-02-08,2026-10-01,ACTIVE,MEDIUM,0
+EXC-00032,dev_environment,USR-2753,manager-036,"Isolated CI runner sandbox for integration tests, no prod data access",2025-05-15,2026-02-25,ACTIVE,MEDIUM,2
+EXC-00033,admin_access,USR-1832,manager-006,"Temporary root on build host to rotate expired signing keys, ticket OPS-8380",2026-02-02,2026-07-18,ACTIVE,LOW,0
+EXC-00034,encryption_waiver,USR-8007,manager-036,At-rest encryption waiver for legacy reporting DB scheduled for 2747 decom,2026-01-01,2026-09-05,EXPIRED,LOW,0
+EXC-00035,admin_access,USR-1685,manager-020,legacy,2025-12-31,2026-06-04,ACTIVE,HIGH,0
+EXC-00036,firewall_rule_open,USR-7658,manager-040,needed,2026-01-23,2026-05-15,PENDING,MEDIUM,0
+EXC-00037,data_access,USR-7745,manager-016,"Cross-team access to ticketing export for audit sampling, no PII columns",2026-03-14,2026-08-08,PENDING,LOW,0
+EXC-00038,firewall_rule_open,USR-6728,manager-020,Allow vendor SFTP egress to partner 10.4.3369.0/24 for nightly batch,2025-12-22,2026-09-09,ACTIVE,MEDIUM,0
+EXC-00039,data_access,USR-5573,manager-023,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-12-16,2026-06-01,EXPIRED,MEDIUM,0
+EXC-00040,data_access,USR-5349,manager-003,needed,2025-11-03,2026-03-31,ACTIVE,MEDIUM,2
+EXC-00041,admin_access,USR-4114,manager-017,"Break-glass DB admin for incident INC-6411 remediation, scoped to prod-eu",2022-05-25,2026-07-12,ACTIVE,MEDIUM,0
+EXC-00042,admin_access,USR-6409,manager-040,"Break-glass DB admin for incident INC-6067 remediation, scoped to prod-eu",2025-02-19,2026-03-09,ACTIVE,HIGH,2
+EXC-00043,firewall_rule_open,USR-5844,manager-036,Open 8443 to monitoring collector during migration window CR-6791,2024-01-02,2026-06-20,ACTIVE,HIGH,0
+EXC-00044,admin_access,USR-4443,manager-028,business need,2026-03-16,2026-05-02,ACTIVE,HIGH,0
+EXC-00045,data_access,USR-2389,manager-019,Read access to anonymized analytics warehouse for Q8475 revenue reporting,2026-02-04,2026-06-27,ACTIVE,MEDIUM,1
+EXC-00046,encryption_waiver,USR-3414,manager-002,At-rest encryption waiver for legacy reporting DB scheduled for 3780 decom,2025-12-23,2026-07-04,ACTIVE,HIGH,0
+EXC-00047,admin_access,USR-7291,manager-032,"Temporary root on build host to rotate expired signing keys, ticket OPS-9531",2025-06-20,2025-09-29,ACTIVE,MEDIUM,0
+EXC-00048,firewall_rule_open,USR-9486,manager-030,Allow vendor SFTP egress to partner 10.4.2981.0/24 for nightly batch,2022-08-31,2026-07-28,ACTIVE,MEDIUM,0
+EXC-00049,admin_access,USR-9270,manager-028,"Temporary root on build host to rotate expired signing keys, ticket OPS-8802",2025-12-10,2026-07-10,PENDING,LOW,1
+EXC-00050,data_access,USR-4919,manager-018,urgent,2025-10-26,2026-06-27,ACTIVE,MEDIUM,1
+EXC-00051,firewall_rule_open,USR-7275,manager-010,Allow vendor SFTP egress to partner 10.4.2367.0/24 for nightly batch,2026-03-17,2026-07-13,ACTIVE,MEDIUM,0
+EXC-00052,data_access,USR-7381,manager-038,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-06-14,2025-12-09,ACTIVE,MEDIUM,2
+EXC-00053,dev_environment,USR-7865,manager-035,urgent,2025-09-17,2026-05-01,ACTIVE,MEDIUM,2
+EXC-00054,data_access,USR-1475,manager-025,Read access to anonymized analytics warehouse for Q4571 revenue reporting,2025-02-16,2025-11-22,ACTIVE,MEDIUM,0
+EXC-00055,firewall_rule_open,USR-1444,manager-006,Allow vendor SFTP egress to partner 10.4.8851.0/24 for nightly batch,2025-09-14,2025-12-16,ACTIVE,MEDIUM,0
+EXC-00056,data_access,USR-6355,manager-022,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-06-11,2025-11-30,ACTIVE,MEDIUM,0
+EXC-00057,data_access,USR-9837,manager-004,Read access to anonymized analytics warehouse for Q7805 revenue reporting,2024-11-12,2026-08-03,ACTIVE,MEDIUM,1
+EXC-00058,dev_environment,USR-3496,manager-016,"Isolated CI runner sandbox for integration tests, no prod data access",2022-07-26,2026-05-02,ACTIVE,LOW,0
+EXC-00059,admin_access,USR-2876,manager-011,"Temporary root on build host to rotate expired signing keys, ticket OPS-6143",2025-07-04,2025-10-22,ACTIVE,MEDIUM,0
+EXC-00060,dev_environment,USR-2245,manager-038,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-6598",2026-01-04,2026-07-04,ACTIVE,HIGH,0
+EXC-00061,data_access,USR-6688,manager-035,Read access to anonymized analytics warehouse for Q9372 revenue reporting,2025-12-26,2026-05-25,ACTIVE,HIGH,0
+EXC-00062,firewall_rule_open,USR-6934,manager-030,Open 8443 to monitoring collector during migration window CR-8131,2025-08-04,2025-12-06,ACTIVE,LOW,0
+EXC-00063,data_access,USR-5397,manager-021,"Cross-team access to ticketing export for audit sampling, no PII columns",2023-09-12,2026-08-13,ACTIVE,HIGH,0
+EXC-00064,dev_environment,USR-6511,manager-002,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-9436",2026-01-17,2026-08-20,EXPIRED,LOW,1
+EXC-00065,firewall_rule_open,USR-5526,manager-036,Open 8443 to monitoring collector during migration window CR-4681,2024-11-26,2025-09-28,ACTIVE,MEDIUM,0
+EXC-00066,admin_access,USR-8342,manager-002,"Break-glass DB admin for incident INC-7900 remediation, scoped to prod-eu",2026-01-13,2026-09-17,REVOKED,MEDIUM,1
+EXC-00067,admin_access,USR-6632,manager-028,"Temporary root on build host to rotate expired signing keys, ticket OPS-7853",2023-05-15,2026-07-06,ACTIVE,HIGH,0
+EXC-00068,dev_environment,USR-4155,manager-021,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-4218",2026-03-07,2026-06-14,ACTIVE,MEDIUM,1
+EXC-00069,admin_access,USR-9595,manager-039,"Break-glass DB admin for incident INC-8033 remediation, scoped to prod-eu",2024-02-22,2026-07-31,ACTIVE,LOW,0
+EXC-00070,firewall_rule_open,USR-3073,manager-018,Allow vendor SFTP egress to partner 10.4.5052.0/24 for nightly batch,2026-04-04,2026-09-28,ACTIVE,MEDIUM,0
+EXC-00071,admin_access,USR-5658,manager-031,"Temporary root on build host to rotate expired signing keys, ticket OPS-1780",2026-04-04,2026-10-08,ACTIVE,HIGH,0
+EXC-00072,firewall_rule_open,USR-1878,manager-010,temporary,2025-08-23,2026-06-19,ACTIVE,MEDIUM,0
+EXC-00073,admin_access,USR-4697,manager-034,"Temporary root on build host to rotate expired signing keys, ticket OPS-9866",2025-12-25,2026-10-20,ACTIVE,LOW,0
+EXC-00074,firewall_rule_open,USR-2625,manager-014,Open 8443 to monitoring collector during migration window CR-9416,2026-01-16,2026-05-30,PENDING,MEDIUM,2
+EXC-00075,encryption_waiver,USR-8381,manager-039,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-04-05,2026-08-27,ACTIVE,LOW,0
+EXC-00076,firewall_rule_open,USR-5334,manager-038,Open 8443 to monitoring collector during migration window CR-1266,2026-01-08,2026-07-13,ACTIVE,HIGH,0
+EXC-00077,data_access,USR-1977,manager-011,Read access to anonymized analytics warehouse for Q4452 revenue reporting,2025-07-17,2026-03-08,ACTIVE,LOW,2
+EXC-00078,data_access,USR-7594,manager-018,Read access to anonymized analytics warehouse for Q7779 revenue reporting,2025-12-14,2026-08-12,PENDING,MEDIUM,0
+EXC-00079,encryption_waiver,USR-2496,manager-015,At-rest encryption waiver for legacy reporting DB scheduled for 9991 decom,2026-03-04,2026-05-21,ACTIVE,MEDIUM,0
+EXC-00080,dev_environment,USR-8708,manager-034,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-9541",2025-09-07,2026-02-10,ACTIVE,HIGH,0
+EXC-00081,data_access,USR-7690,manager-022,"Cross-team access to ticketing export for audit sampling, no PII columns",2026-02-04,2026-08-12,PENDING,MEDIUM,2
+EXC-00082,firewall_rule_open,USR-1601,manager-030,Open 8443 to monitoring collector during migration window CR-4822,2026-01-11,2026-08-25,ACTIVE,HIGH,1
+EXC-00083,admin_access,USR-1888,manager-013,"Break-glass DB admin for incident INC-8989 remediation, scoped to prod-eu",2026-02-05,2026-08-28,ACTIVE,HIGH,1
+EXC-00084,encryption_waiver,USR-5719,manager-029,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2024-12-20,2026-02-21,ACTIVE,LOW,1
+EXC-00085,dev_environment,USR-7684,manager-006,"Isolated CI runner sandbox for integration tests, no prod data access",2026-01-25,2026-05-18,ACTIVE,LOW,2
+EXC-00086,firewall_rule_open,USR-9337,manager-018,Allow vendor SFTP egress to partner 10.4.8265.0/24 for nightly batch,2026-01-04,2026-07-28,EXPIRED,HIGH,0
+EXC-00087,firewall_rule_open,USR-9327,manager-009,Allow vendor SFTP egress to partner 10.4.6384.0/24 for nightly batch,2025-06-22,2025-10-24,ACTIVE,HIGH,1
+EXC-00088,dev_environment,USR-9022,manager-010,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-142",2025-12-19,2026-06-22,PENDING,MEDIUM,1
+EXC-00089,firewall_rule_open,USR-7274,manager-015,Open 8443 to monitoring collector during migration window CR-5372,2026-03-12,2026-07-15,ACTIVE,MEDIUM,2
+EXC-00090,dev_environment,USR-3492,manager-032,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-6425",2026-01-11,2026-10-28,ACTIVE,HIGH,1
+EXC-00091,dev_environment,USR-3361,manager-027,temporary,2025-06-20,2026-06-10,ACTIVE,LOW,0
+EXC-00092,dev_environment,USR-9742,manager-025,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-1415",2025-12-17,2026-08-07,REVOKED,MEDIUM,0
+EXC-00093,dev_environment,USR-5708,manager-015,see email,2025-11-16,2026-07-25,ACTIVE,HIGH,1
+EXC-00094,data_access,USR-6314,manager-004,Read access to anonymized analytics warehouse for Q5006 revenue reporting,2026-04-02,2026-05-26,ACTIVE,MEDIUM,0
+EXC-00095,firewall_rule_open,USR-7267,manager-040,Allow vendor SFTP egress to partner 10.4.2885.0/24 for nightly batch,2026-03-14,2026-06-04,ACTIVE,MEDIUM,2
+EXC-00096,data_access,USR-1153,manager-030,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-05-20,2025-10-07,ACTIVE,MEDIUM,0
+EXC-00097,dev_environment,USR-8484,manager-020,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-7051",2026-01-07,2026-07-18,ACTIVE,MEDIUM,1
+EXC-00098,admin_access,USR-5837,manager-002,"Temporary root on build host to rotate expired signing keys, ticket OPS-9517",2025-04-29,2025-09-28,ACTIVE,MEDIUM,0
+EXC-00099,dev_environment,USR-4770,manager-039,"Isolated CI runner sandbox for integration tests, no prod data access",2025-12-20,2026-07-27,ACTIVE,HIGH,2
+EXC-00100,data_access,USR-1645,manager-020,Read access to anonymized analytics warehouse for Q1691 revenue reporting,2026-01-15,2026-10-27,ACTIVE,HIGH,0
+EXC-00101,data_access,USR-3877,manager-013,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-12-31,2026-08-29,ACTIVE,LOW,0
+EXC-00102,admin_access,USR-6549,manager-008,business need,2025-11-05,2026-06-17,ACTIVE,HIGH,2
+EXC-00103,firewall_rule_open,USR-7464,manager-001,Open 8443 to monitoring collector during migration window CR-9231,2023-11-23,2026-05-11,ACTIVE,HIGH,0
+EXC-00104,firewall_rule_open,USR-8724,manager-002,Open 8443 to monitoring collector during migration window CR-6186,2026-03-23,2026-07-13,ACTIVE,HIGH,0
+EXC-00105,encryption_waiver,USR-7689,manager-008,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-01-06,2026-07-31,REVOKED,LOW,2
+EXC-00106,admin_access,USR-7367,manager-030,"Break-glass DB admin for incident INC-3946 remediation, scoped to prod-eu",2026-01-27,2026-06-18,REVOKED,LOW,1
+EXC-00107,firewall_rule_open,USR-9017,manager-040,Allow vendor SFTP egress to partner 10.4.6897.0/24 for nightly batch,2023-01-31,2026-05-12,ACTIVE,MEDIUM,2
+EXC-00108,firewall_rule_open,USR-2627,manager-024,Open 8443 to monitoring collector during migration window CR-7385,2026-03-06,2026-08-15,REVOKED,LOW,0
+EXC-00109,encryption_waiver,USR-2501,manager-014,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2025-12-18,2026-09-08,RENEWED,MEDIUM,1
+EXC-00110,data_access,USR-4394,manager-038,Read access to anonymized analytics warehouse for Q9350 revenue reporting,2026-03-10,2026-06-01,ACTIVE,LOW,0
+EXC-00111,admin_access,USR-3129,manager-035,"Break-glass DB admin for incident INC-4642 remediation, scoped to prod-eu",2025-12-17,2026-06-21,EXPIRED,HIGH,0
+EXC-00112,firewall_rule_open,USR-4898,manager-038,Allow vendor SFTP egress to partner 10.4.5969.0/24 for nightly batch,2022-09-15,2026-08-08,ACTIVE,LOW,0
+EXC-00113,firewall_rule_open,USR-6931,manager-033,Allow vendor SFTP egress to partner 10.4.1141.0/24 for nightly batch,2026-02-04,2026-09-06,ACTIVE,HIGH,1
+EXC-00114,encryption_waiver,USR-1996,manager-031,At-rest encryption waiver for legacy reporting DB scheduled for 7604 decom,2026-01-13,2026-05-22,ACTIVE,LOW,2
+EXC-00115,dev_environment,USR-2076,manager-009,"Isolated CI runner sandbox for integration tests, no prod data access",2026-01-18,2026-06-21,ACTIVE,LOW,1
+EXC-00116,firewall_rule_open,USR-8048,manager-007,Open 8443 to monitoring collector during migration window CR-7533,2025-01-12,2025-10-23,ACTIVE,MEDIUM,0
+EXC-00117,data_access,USR-7779,manager-022,Read access to anonymized analytics warehouse for Q7146 revenue reporting,2023-08-27,2026-05-29,ACTIVE,HIGH,2
+EXC-00118,data_access,USR-8770,manager-005,"Cross-team access to ticketing export for audit sampling, no PII columns",2023-11-14,2026-05-19,ACTIVE,MEDIUM,0
+EXC-00119,admin_access,USR-6400,manager-008,"Break-glass DB admin for incident INC-9708 remediation, scoped to prod-eu",2024-12-14,2025-11-03,ACTIVE,LOW,0
+EXC-00120,firewall_rule_open,USR-9313,manager-014,temporary,2025-10-08,2026-05-15,EXPIRED,HIGH,1
+EXC-00121,admin_access,USR-4705,manager-028,"Temporary root on build host to rotate expired signing keys, ticket OPS-1982",2025-12-20,2026-07-27,PENDING,HIGH,0
+EXC-00122,dev_environment,USR-5477,manager-020,"Isolated CI runner sandbox for integration tests, no prod data access",2026-02-22,2026-06-07,PENDING,HIGH,2
+EXC-00123,dev_environment,USR-1502,manager-006,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-1240",2026-03-18,2026-10-24,ACTIVE,HIGH,0
+EXC-00124,data_access,USR-2391,manager-004,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-04-14,2025-11-01,ACTIVE,LOW,0
+EXC-00125,admin_access,USR-8242,manager-027,"Temporary root on build host to rotate expired signing keys, ticket OPS-7047",2026-02-02,2026-10-17,ACTIVE,MEDIUM,0
+EXC-00126,firewall_rule_open,USR-6053,manager-003,Open 8443 to monitoring collector during migration window CR-9817,2026-02-02,2026-09-26,ACTIVE,LOW,1
+EXC-00127,firewall_rule_open,USR-5742,manager-021,Allow vendor SFTP egress to partner 10.4.2348.0/24 for nightly batch,2025-12-29,2026-07-19,RENEWED,MEDIUM,0
+EXC-00128,admin_access,USR-6802,manager-005,"Break-glass DB admin for incident INC-8296 remediation, scoped to prod-eu",2024-12-15,2025-10-06,ACTIVE,MEDIUM,0
+EXC-00129,firewall_rule_open,USR-7626,manager-027,Open 8443 to monitoring collector during migration window CR-9533,2025-02-20,2025-10-31,ACTIVE,LOW,1
+EXC-00130,firewall_rule_open,USR-4986,manager-028,temporary,2026-01-30,2026-06-05,ACTIVE,HIGH,0
+EXC-00131,encryption_waiver,USR-2251,manager-033,At-rest encryption waiver for legacy reporting DB scheduled for 3730 decom,2026-02-22,2026-06-27,ACTIVE,HIGH,0
+EXC-00132,encryption_waiver,USR-5193,manager-013,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-03-23,2026-06-21,ACTIVE,MEDIUM,0
+EXC-00133,admin_access,USR-8354,manager-037,"Temporary root on build host to rotate expired signing keys, ticket OPS-7701",2022-10-21,2026-07-11,ACTIVE,LOW,0
+EXC-00134,data_access,USR-5961,manager-018,"Cross-team access to ticketing export for audit sampling, no PII columns",2026-02-04,2026-09-05,RENEWED,LOW,0
+EXC-00135,encryption_waiver,USR-2257,manager-006,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-02-17,2026-07-27,ACTIVE,MEDIUM,1
+EXC-00136,encryption_waiver,USR-4084,manager-021,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2024-12-09,2025-10-11,ACTIVE,HIGH,2
+EXC-00137,encryption_waiver,USR-1641,manager-016,legacy,2025-07-01,2026-07-29,ACTIVE,LOW,1
+EXC-00138,data_access,USR-7697,manager-022,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-05-06,2025-12-17,ACTIVE,LOW,2
+EXC-00139,data_access,USR-7333,manager-019,"Cross-team access to ticketing export for audit sampling, no PII columns",2023-05-10,2026-07-25,ACTIVE,LOW,0
+EXC-00140,firewall_rule_open,USR-7421,manager-009,business need,2026-01-03,2026-05-14,EXPIRED,LOW,2
+EXC-00141,encryption_waiver,USR-2531,manager-028,At-rest encryption waiver for legacy reporting DB scheduled for 2193 decom,2026-01-10,2026-09-26,PENDING,HIGH,1
+EXC-00142,encryption_waiver,USR-3538,manager-005,At-rest encryption waiver for legacy reporting DB scheduled for 3245 decom,2026-03-08,2026-06-19,ACTIVE,MEDIUM,0
+EXC-00143,firewall_rule_open,USR-7172,manager-010,Allow vendor SFTP egress to partner 10.4.5617.0/24 for nightly batch,2024-11-15,2026-02-21,ACTIVE,HIGH,2
+EXC-00144,admin_access,USR-4891,manager-029,"Temporary root on build host to rotate expired signing keys, ticket OPS-815",2023-10-08,2026-06-15,ACTIVE,HIGH,0
+EXC-00146,encryption_waiver,USR-7026,manager-037,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2025-11-01,2026-06-08,PENDING,HIGH,0
+EXC-00147,dev_environment,USR-3267,manager-017,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-2755",2025-12-22,2026-07-05,ACTIVE,HIGH,1
+EXC-00148,admin_access,USR-5469,manager-029,"Break-glass DB admin for incident INC-4770 remediation, scoped to prod-eu",2026-03-26,2026-06-25,ACTIVE,HIGH,0
+EXC-00149,dev_environment,USR-7495,manager-033,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-536",2025-02-27,2026-03-13,ACTIVE,MEDIUM,0
+EXC-00150,firewall_rule_open,USR-6493,manager-010,Open 8443 to monitoring collector during migration window CR-1723,2025-12-19,2026-10-28,ACTIVE,LOW,0
+EXC-00151,admin_access,USR-1311,manager-017,"Temporary root on build host to rotate expired signing keys, ticket OPS-7449",2026-02-28,2026-05-25,PENDING,HIGH,0
+EXC-00152,admin_access,USR-2996,manager-004,business need,2025-10-20,2026-04-15,ACTIVE,HIGH,2
+EXC-00153,firewall_rule_open,USR-9443,manager-037,Open 8443 to monitoring collector during migration window CR-9876,2023-06-02,2026-05-02,ACTIVE,LOW,0
+EXC-00154,firewall_rule_open,USR-2402,manager-034,Allow vendor SFTP egress to partner 10.4.9449.0/24 for nightly batch,2025-02-26,2026-02-07,ACTIVE,MEDIUM,2
+EXC-00155,dev_environment,USR-7338,manager-024,"Isolated CI runner sandbox for integration tests, no prod data access",2025-01-30,2026-03-15,ACTIVE,HIGH,2
+EXC-00156,firewall_rule_open,USR-1726,manager-023,Allow vendor SFTP egress to partner 10.4.9633.0/24 for nightly batch,2025-12-06,2026-06-01,PENDING,LOW,0
+EXC-00157,encryption_waiver,USR-2033,manager-030,At-rest encryption waiver for legacy reporting DB scheduled for 3086 decom,2025-12-23,2026-06-18,ACTIVE,HIGH,1
+EXC-00158,admin_access,USR-8756,manager-017,"Temporary root on build host to rotate expired signing keys, ticket OPS-8544",2025-11-20,2026-07-23,PENDING,MEDIUM,0
+EXC-00159,admin_access,USR-8159,manager-026,"Temporary root on build host to rotate expired signing keys, ticket OPS-4576",2026-03-21,2026-08-17,ACTIVE,HIGH,0
+EXC-00160,data_access,USR-5369,manager-006,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-12-24,2026-09-24,PENDING,MEDIUM,0
+EXC-00161,data_access,USR-6372,manager-019,"Cross-team access to ticketing export for audit sampling, no PII columns",2025-08-06,2026-03-06,ACTIVE,HIGH,0
+EXC-00162,firewall_rule_open,USR-8126,manager-018,Open 8443 to monitoring collector during migration window CR-793,2025-03-31,2025-10-20,ACTIVE,MEDIUM,1
+EXC-00163,encryption_waiver,USR-8179,manager-003,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-03-18,2026-10-17,ACTIVE,MEDIUM,1
+EXC-00164,admin_access,USR-7077,manager-024,"Break-glass DB admin for incident INC-2613 remediation, scoped to prod-eu",2023-01-06,2026-06-26,ACTIVE,MEDIUM,0
+EXC-00165,firewall_rule_open,USR-1424,manager-012,Open 8443 to monitoring collector during migration window CR-4666,2026-03-05,2026-06-13,ACTIVE,MEDIUM,0
+EXC-00166,firewall_rule_open,USR-9047,manager-013,Open 8443 to monitoring collector during migration window CR-3615,2024-11-18,2026-01-12,ACTIVE,MEDIUM,0
+EXC-00167,admin_access,USR-9882,manager-019,"Temporary root on build host to rotate expired signing keys, ticket OPS-5792",2025-08-25,2025-11-06,ACTIVE,LOW,1
+EXC-00168,dev_environment,USR-3275,manager-016,"Isolated CI runner sandbox for integration tests, no prod data access",2024-05-10,2026-08-09,ACTIVE,MEDIUM,0
+EXC-00169,data_access,USR-7523,manager-031,Read access to anonymized analytics warehouse for Q1512 revenue reporting,2025-08-25,2026-01-06,ACTIVE,MEDIUM,0
+EXC-00170,encryption_waiver,USR-9476,manager-023,At-rest encryption waiver for legacy reporting DB scheduled for 1315 decom,2025-11-06,2026-07-13,PENDING,LOW,0
+EXC-00171,admin_access,USR-3034,manager-034,"Break-glass DB admin for incident INC-7188 remediation, scoped to prod-eu",2025-01-13,2026-03-12,ACTIVE,LOW,2
+EXC-00172,admin_access,USR-5496,manager-009,"Temporary root on build host to rotate expired signing keys, ticket OPS-1392",2026-03-04,2026-07-04,ACTIVE,MEDIUM,0
+EXC-00173,encryption_waiver,USR-6531,manager-037,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-01-11,2026-10-21,ACTIVE,HIGH,0
+EXC-00174,admin_access,USR-1496,manager-032,"Break-glass DB admin for incident INC-9473 remediation, scoped to prod-eu",2026-02-11,2026-10-20,EXPIRED,MEDIUM,2
+EXC-00175,dev_environment,USR-2195,manager-004,"Isolated CI runner sandbox for integration tests, no prod data access",2024-02-01,2026-06-27,ACTIVE,MEDIUM,0
+EXC-00176,admin_access,USR-7532,manager-009,"Break-glass DB admin for incident INC-5221 remediation, scoped to prod-eu",2025-04-17,2025-12-28,ACTIVE,HIGH,0
+EXC-00177,data_access,USR-3308,manager-007,Read access to anonymized analytics warehouse for Q4482 revenue reporting,2026-02-07,2026-07-17,ACTIVE,MEDIUM,0
+EXC-00178,admin_access,USR-3610,manager-032,"Break-glass DB admin for incident INC-5464 remediation, scoped to prod-eu",2025-12-11,2026-06-08,PENDING,LOW,1
+EXC-00179,dev_environment,USR-4944,manager-014,"Isolated CI runner sandbox for integration tests, no prod data access",2025-10-23,2026-07-12,PENDING,LOW,1
+EXC-00180,encryption_waiver,USR-2761,manager-028,At-rest encryption waiver for legacy reporting DB scheduled for 4781 decom,2026-01-27,2026-05-17,ACTIVE,HIGH,2
+EXC-00181,admin_access,USR-4189,manager-024,"Break-glass DB admin for incident INC-6663 remediation, scoped to prod-eu",2026-03-30,2026-10-07,ACTIVE,MEDIUM,1
+EXC-00182,encryption_waiver,USR-7114,manager-022,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2025-08-09,2025-12-16,ACTIVE,MEDIUM,2
+EXC-00183,encryption_waiver,USR-1637,manager-009,At-rest encryption waiver for legacy reporting DB scheduled for 8293 decom,2026-03-31,2026-05-26,ACTIVE,HIGH,2
+EXC-00184,data_access,USR-3662,manager-026,Read access to anonymized analytics warehouse for Q5473 revenue reporting,2024-11-18,2026-01-04,ACTIVE,HIGH,0
+EXC-00185,dev_environment,USR-1272,manager-024,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-9322",2026-02-26,2026-09-13,ACTIVE,HIGH,0
+EXC-00186,firewall_rule_open,USR-4728,manager-004,Allow vendor SFTP egress to partner 10.4.9879.0/24 for nightly batch,2025-01-28,2026-01-18,ACTIVE,HIGH,0
+EXC-00187,encryption_waiver,USR-2800,manager-013,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2024-10-30,2026-07-12,ACTIVE,MEDIUM,2
+EXC-00188,admin_access,USR-9498,manager-014,"Temporary root on build host to rotate expired signing keys, ticket OPS-1120",2026-01-05,2026-06-19,ACTIVE,MEDIUM,0
+EXC-00189,encryption_waiver,USR-9950,manager-023,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2024-12-29,2025-12-29,ACTIVE,MEDIUM,1
+EXC-00190,data_access,USR-5571,manager-036,"Cross-team access to ticketing export for audit sampling, no PII columns",2022-03-27,2026-05-31,ACTIVE,HIGH,0
+EXC-00191,firewall_rule_open,USR-5480,manager-019,business need,2025-10-05,2026-06-16,REVOKED,HIGH,0
+EXC-00192,admin_access,USR-2294,manager-023,"Break-glass DB admin for incident INC-4858 remediation, scoped to prod-eu",2026-03-31,2026-07-27,ACTIVE,MEDIUM,1
+EXC-00193,dev_environment,USR-3249,manager-007,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-9308",2022-12-20,2026-06-03,ACTIVE,LOW,0
+EXC-00194,encryption_waiver,USR-6411,manager-031,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-03-24,2026-08-28,ACTIVE,LOW,2
+EXC-00195,admin_access,USR-4267,manager-019,"Temporary root on build host to rotate expired signing keys, ticket OPS-7893",2026-02-03,2026-10-28,ACTIVE,LOW,2
+EXC-00196,firewall_rule_open,USR-3880,manager-003,urgent,2026-02-25,2026-03-30,ACTIVE,HIGH,0
+EXC-00197,dev_environment,USR-2758,manager-022,"Isolated CI runner sandbox for integration tests, no prod data access",2024-12-11,2025-10-23,ACTIVE,LOW,0
+EXC-00198,firewall_rule_open,USR-6417,manager-011,Open 8443 to monitoring collector during migration window CR-4570,2025-06-21,2026-02-26,ACTIVE,LOW,1
+EXC-00199,data_access,USR-4164,manager-012,"Cross-team access to ticketing export for audit sampling, no PII columns",2023-04-30,2026-07-25,ACTIVE,HIGH,0
+EXC-00200,encryption_waiver,USR-2562,manager-012,At-rest encryption waiver for legacy reporting DB scheduled for 1521 decom,2025-03-06,2025-10-06,ACTIVE,HIGH,1
+EXC-00201,dev_environment,USR-5947,manager-038,business need,2025-07-31,2026-04-23,ACTIVE,MEDIUM,0
+EXC-00202,data_access,USR-7642,manager-033,Read access to anonymized analytics warehouse for Q7725 revenue reporting,2024-01-22,2026-05-20,ACTIVE,LOW,0
+EXC-00203,dev_environment,USR-4590,manager-009,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-6121",2023-03-13,2026-05-28,ACTIVE,HIGH,0
+EXC-00204,firewall_rule_open,USR-2341,manager-034,see email,2025-11-25,2026-04-18,ACTIVE,MEDIUM,0
+EXC-00205,firewall_rule_open,USR-9792,manager-010,Allow vendor SFTP egress to partner 10.4.9072.0/24 for nightly batch,2026-01-31,2026-07-05,ACTIVE,LOW,2
+EXC-00206,admin_access,USR-1911,manager-030,"Temporary root on build host to rotate expired signing keys, ticket OPS-1589",2025-01-09,2025-12-02,ACTIVE,HIGH,0
+EXC-00207,admin_access,USR-1049,manager-014,"Temporary root on build host to rotate expired signing keys, ticket OPS-456",2025-03-09,2026-01-20,ACTIVE,MEDIUM,2
+EXC-00208,encryption_waiver,USR-5703,manager-027,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2026-02-04,2026-05-23,ACTIVE,HIGH,0
+EXC-00209,admin_access,USR-7154,manager-006,"Temporary root on build host to rotate expired signing keys, ticket OPS-7448",2022-06-25,2026-06-17,ACTIVE,MEDIUM,1
+EXC-00210,data_access,USR-3086,manager-015,Read access to anonymized analytics warehouse for Q8902 revenue reporting,2025-03-10,2025-11-11,ACTIVE,LOW,0
+EXC-00211,data_access,USR-8546,manager-023,legacy,2025-09-03,2026-04-13,ACTIVE,HIGH,1
+EXC-00212,admin_access,USR-2102,manager-007,"Temporary root on build host to rotate expired signing keys, ticket OPS-356",2025-12-30,2026-06-10,PENDING,LOW,0
+EXC-00213,encryption_waiver,USR-9843,manager-014,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2023-09-09,2026-05-29,ACTIVE,LOW,0
+EXC-00214,data_access,USR-4881,manager-020,"Cross-team access to ticketing export for audit sampling, no PII columns",2026-01-19,2026-08-05,ACTIVE,LOW,0
+EXC-00215,dev_environment,USR-3869,manager-028,"Sandbox cluster for ML model evaluation, isolated VPC, ticket DEV-1098",2024-12-16,2025-10-26,ACTIVE,MEDIUM,1
+EXC-00216,encryption_waiver,USR-5913,manager-025,At-rest encryption waiver for legacy reporting DB scheduled for 6921 decom,2026-02-12,2026-06-22,ACTIVE,HIGH,1
+EXC-00217,admin_access,USR-7761,manager-027,"Break-glass DB admin for incident INC-7686 remediation, scoped to prod-eu",2026-03-29,2026-10-05,ACTIVE,MEDIUM,0
+EXC-00218,encryption_waiver,USR-2514,manager-035,"Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",2025-12-18,2026-08-17,ACTIVE,MEDIUM,0
+EXC-00219,data_access,USR-4555,manager-031,Read access to anonymized analytics warehouse for Q1292 revenue reporting,2026-03-12,2026-10-12,ACTIVE,HIGH,2
+EXC-00220,admin_access,USR-4974,manager-039,"Break-glass DB admin for incident INC-2022 remediation, scoped to prod-eu",2025-12-31,2026-09-14,PENDING,LOW,0
+EXC-00221,data_access,USR-6886,manager-020,"Cross-team access to ticketing export for audit sampling, no PII columns",2026-01-27,2026-10-28,ACTIVE,MEDIUM,0
