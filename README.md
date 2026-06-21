@@ -87,8 +87,14 @@ npm install
 npm run dev                              # http://localhost:5173 (proxies /api -> :8000)
 ```
 
-Open http://localhost:5173. To run on PostgreSQL instead of SQLite, set
-`DATABASE_URL=postgresql+psycopg://user:pass@host/db` — no code changes.
+Open http://localhost:5173.
+
+**PostgreSQL:** the app runs on SQLite by default but the ORM/schema are
+Postgres-compatible — no code changes needed to switch. To run on Postgres,
+uncomment `psycopg[binary]` in `requirements.txt`, reinstall, and point the app
+at your database:
+`DATABASE_URL=postgresql+psycopg://user:pass@host/db uvicorn app.main:app`.
+(Not wired to a Postgres instance in this repo; it has only been exercised on SQLite.)
 
 ---
 
