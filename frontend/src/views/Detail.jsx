@@ -116,6 +116,14 @@ export default function Detail({ id, onBack, onChanged }) {
             >
               Revoke
             </button>
+            <button
+              disabled={busy || closed}
+              onClick={() => act("escalate")}
+              title="Route this exception to its approver / risk owner for review (logged)"
+              className="rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Escalate to owner
+            </button>
             {closed && (
               <p className="text-xs text-slate-500">
                 This exception is revoked (closed).

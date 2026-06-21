@@ -260,8 +260,17 @@ def lifecycle_action(
         row.status = "RENEWED"
         row.renewal_count = (row.renewal_count or 0) + 1
         detail = f"Exception renewed (renewal_count={row.renewal_count})"
+    elif action == "escalate":
+        # Escalation is a routing/notification action, not a lifecycle state
+        # change: it records that the exception was raised to its approver/owner
+        # for review. In production this is the hook point for ITSM/email/Slack
+        # (see README "Integration recommendations"); offline we log it.
+        detail = (
+            f"Escalated to approver {row.approver or 'risk owner'} for review "
+            f"(computed risk {row.computed_risk_level})"
+        )
     else:
-        raise HTTPException(400, "action must be 'renew' or 'revoke'")
+        raise HTTPException(400, "action must be 'renew', 'revoke' or 'escalate'")
 
     db.add(ActivityLog(exception_id=exception_id, action=action.upper(), detail=detail))
     db.commit()

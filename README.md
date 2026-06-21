@@ -135,16 +135,36 @@ pinned by `test_no_renewal_suppressed_when_expired` and
 | --- | --- |
 | Full visibility into all exceptions | `Dashboard.jsx`, `Registry.jsx` + `GET /api/dashboard`, `/api/exceptions` |
 | Expiry accuracy (expired-not-revoked detection) | `engine.compute_alerts` → `EXPIRED_NOT_REVOKED`, `OVERDUE_RENEWAL` |
-| Risk scoring (4-tier + escalation) | `engine.base_risk`, `engine.escalate_risk` |
+| Risk scoring (4-tier + escalation) | `engine.sensitivity`, `engine.escalate_risk` |
 | Explainable alerts | `engine.compute_alerts` (7 rules, `CODE: explanation`) |
 | Actionable recommendations | `engine.build_recommendation` |
 | Compliance / CIA mapping | `engine.framework_tags`, `engine.cia_tags` |
-| Lifecycle actions (Renew / Revoke + log) | `POST /api/exceptions/{id}/action`, `ActivityLog`, `Detail.jsx` |
+| Lifecycle + escalation actions (Renew / Revoke / Escalate to owner + log) | `POST /api/exceptions/{id}/action`, `ActivityLog`, `Detail.jsx` |
 | CSV ingestion (analyzes any row count; validates schema) | `POST /api/upload`, `Upload.jsx` |
 | One-click portfolio / audit report | `report.py`, `GET /api/report`, `Report.jsx` |
 | Report download — PDF / Excel / text | `exporters.py`, `GET /api/report.pdf`, `/api/report.xlsx`, `/api/report/download` |
 | Analyzed-record export (JSON/CSV) | `GET /api/export.json`, `/api/export.csv` |
 | Time-travel demo (configurable eval date) | `STATE.evaluation_date`, `POST /api/settings`, header date control |
+
+## Integration recommendations (production)
+
+Sunset is intentionally 100% offline for the demo, but the engine is built to be
+the source of truth that *drives* downstream workflow tools rather than replace
+them. Recommended production integrations, and where each plugs in:
+
+- **ITSM (ServiceNow / Jira):** the **Escalate to owner** action
+  (`POST /api/exceptions/{id}/action` with `action="escalate"`) is the hook
+  point — in production it would open/update a ticket assigned to the exception's
+  approver. Today it records the escalation to the `ActivityLog`.
+- **Email / Slack notifications:** the daily portfolio report (`report.py`) and
+  the per-record `recommendation` (e.g. *"REVOKE IMMEDIATELY…"*,
+  *"Escalate review…"*) are ready-made notification payloads — a scheduled job
+  would push CRITICAL/expired-not-revoked items to a channel or mailbox.
+- **CMDB / IdP (Okta / Entra):** `requester` / `approver` would resolve to real
+  identities and group ownership for routing.
+
+These are deliberately *not* wired up (no external API calls at runtime, per §8);
+the seams above are where a team would connect them.
 
 ## What we deliberately did **not** build (spec §8)
 

@@ -18,6 +18,9 @@ from app.db import Base
 
 
 def _utcnow() -> datetime:
+    # Wall-clock is used ONLY for DB row audit timestamps (created_at/updated_at),
+    # never for risk or expiry math — that is always relative to EVALUATION_DATE
+    # in engine.py. These columns record when a row was written, not "now" logic.
     return datetime.now(timezone.utc)
 
 

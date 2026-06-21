@@ -108,49 +108,87 @@ export default function Registry({ openDetail }) {
 function Table({ records, openDetail }) {
   const rows = useMemo(() => records.slice(0, 400), [records]);
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full min-w-[640px] text-sm">
-        <thead>
-          <tr className="text-left text-xs uppercase tracking-wider text-slate-500">
-            <th className="py-2 pr-3">ID</th>
-            <th className="py-2 pr-3">Type</th>
-            <th className="py-2 pr-3">Status</th>
-            <th className="py-2 pr-3">Risk</th>
-            <th className="py-2 pr-3">Alerts</th>
-            <th className="py-2 pr-3">Expiry</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-800">
-          {rows.map((r) => (
-            <tr
-              key={r.exception_id}
+    <div>
+      {/* Mobile (< md): stacked cards so Risk + Status are visible immediately,
+          no horizontal scroll. Risk is the column judges most want to see. */}
+      <ul className="space-y-2 md:hidden">
+        {rows.map((r) => (
+          <li key={r.exception_id}>
+            <button
               onClick={() => openDetail(r.exception_id)}
-              className="cursor-pointer transition hover:bg-slate-800/40"
+              className="w-full rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-left transition hover:bg-slate-800/40"
             >
-              <td className="mono py-2 pr-3 text-slate-300">{r.exception_id}</td>
-              <td className="py-2 pr-3 text-slate-300">{typeLabel(r.type)}</td>
-              <td className="py-2 pr-3">
-                <StatusBadge status={r.status} />
-              </td>
-              <td className="py-2 pr-3">
-                <RiskBadge level={r.computed_risk_level} />
-              </td>
-              <td className="py-2 pr-3">
-                {r.alerts.length > 0 ? (
-                  <span className="rounded-md bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
-                    {r.alerts.length}
+              <div className="flex items-center justify-between gap-2">
+                <span className="mono text-sm text-slate-200">
+                  {r.exception_id}
+                </span>
+                <div className="flex shrink-0 items-center gap-2">
+                  <RiskBadge level={r.computed_risk_level} />
+                  <StatusBadge status={r.status} />
+                </div>
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-400">
+                <span className="text-slate-300">{typeLabel(r.type)}</span>
+                <span className="flex items-center gap-3">
+                  <span>
+                    {r.alerts.length > 0
+                      ? `${r.alerts.length} alert${r.alerts.length === 1 ? "" : "s"}`
+                      : "no alerts"}
                   </span>
-                ) : (
-                  <span className="text-xs text-slate-600">—</span>
-                )}
-              </td>
-              <td className="mono py-2 pr-3 text-slate-400">
-                {r.end_date || "—"}
-              </td>
+                  <span className="mono">{r.end_date || "—"}</span>
+                </span>
+              </div>
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* Desktop (md+): full table, unchanged. */}
+      <div className="hidden overflow-x-auto md:block">
+        <table className="w-full min-w-[640px] text-sm">
+          <thead>
+            <tr className="text-left text-xs uppercase tracking-wider text-slate-500">
+              <th className="py-2 pr-3">ID</th>
+              <th className="py-2 pr-3">Type</th>
+              <th className="py-2 pr-3">Status</th>
+              <th className="py-2 pr-3">Risk</th>
+              <th className="py-2 pr-3">Alerts</th>
+              <th className="py-2 pr-3">Expiry</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-800">
+            {rows.map((r) => (
+              <tr
+                key={r.exception_id}
+                onClick={() => openDetail(r.exception_id)}
+                className="cursor-pointer transition hover:bg-slate-800/40"
+              >
+                <td className="mono py-2 pr-3 text-slate-300">{r.exception_id}</td>
+                <td className="py-2 pr-3 text-slate-300">{typeLabel(r.type)}</td>
+                <td className="py-2 pr-3">
+                  <StatusBadge status={r.status} />
+                </td>
+                <td className="py-2 pr-3">
+                  <RiskBadge level={r.computed_risk_level} />
+                </td>
+                <td className="py-2 pr-3">
+                  {r.alerts.length > 0 ? (
+                    <span className="rounded-md bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
+                      {r.alerts.length}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-slate-600">—</span>
+                  )}
+                </td>
+                <td className="mono py-2 pr-3 text-slate-400">
+                  {r.end_date || "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {records.length > rows.length && (
         <p className="mt-3 text-xs text-slate-500">
           Showing first {rows.length} of {records.length}. Narrow the filters to
