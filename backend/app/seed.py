@@ -53,7 +53,7 @@ TYPES = [
 GOOD_JUSTIFICATIONS = {
     "admin_access": [
         "Break-glass DB admin for incident INC-{n} remediation, scoped to prod-eu",
-        "Temporary root on build host to rotate expired signing keys, ticket OPS-{n}",
+        "Short-lived root on build host to rotate expired signing keys, ticket OPS-{n}",
     ],
     "firewall_rule_open": [
         "Allow vendor SFTP egress to partner 10.4.{n}.0/24 for nightly batch",
@@ -61,7 +61,7 @@ GOOD_JUSTIFICATIONS = {
     ],
     "encryption_waiver": [
         "Defer TLS on internal metrics bus pending hardware refresh, risk-accepted",
-        "At-rest encryption waiver for legacy reporting DB scheduled for {n} decom",
+        "At-rest encryption waiver for ageing reporting DB scheduled for {n} decom",
     ],
     "data_access": [
         "Read access to anonymized analytics warehouse for Q{n} revenue reporting",
@@ -83,104 +83,205 @@ VAGUE_JUSTIFICATIONS = [
     "see email",
 ]
 
-STATUSES = ["ACTIVE", "EXPIRED", "PENDING", "REVOKED", "RENEWED"]
-RISK_LEVELS = ["LOW", "MEDIUM", "HIGH"]
-
 EVAL = engine.DEFAULT_EVALUATION_DATE  # 2026-04-15
+
+# Overall type mix — skewed toward lower-sensitivity resources, mirroring a real
+# portfolio (lots of dev sandboxes and firewall rules, fewer admin/crypto waivers).
+TYPE_WEIGHTS = {
+    "dev_environment": 30,
+    "firewall_rule_open": 30,
+    "data_access": 15,
+    "admin_access": 15,
+    "encryption_waiver": 10,
+}
+# Severe / overdue cases skew toward higher-sensitivity, exposed resources — a
+# long-overdue admin key or open firewall is far more common (and interesting)
+# than a stale dev sandbox. Dev is deliberately omitted here.
+SEVERE_TYPE_WEIGHTS = {
+    "firewall_rule_open": 32,
+    "admin_access": 26,
+    "data_access": 22,
+    "encryption_waiver": 20,
+}
+# Minor hygiene issues skew toward firewall so a realistic slice of them surface
+# as MEDIUM rather than everything low-sensitivity collapsing to LOW.
+MINOR_TYPE_WEIGHTS = {
+    "firewall_rule_open": 45,
+    "dev_environment": 18,
+    "data_access": 14,
+    "admin_access": 13,
+    "encryption_waiver": 10,
+}
+
+# How many records of each lifecycle "profile" to generate (besides the explicit
+# EXC-00145). Tuned so that, among ~180 active exceptions, the risk mix is
+# realistic: a large healthy LOW/MEDIUM base with a ~18% minority of anomalies
+# producing the HIGH/CRITICAL tail. See the printed distribution in the README.
+PROFILE_COUNTS = {
+    "healthy": 144,             # active, within expiry, recently reviewed
+    "active_vague": 5,          # active but generic justification (minor)
+    "active_no_renewal": 4,     # active 90+ days, never renewed (minor)
+    "active_long_running": 18,  # active multi-/many-month waiver (severe)
+    "expired_not_revoked": 8,   # past expiry, still active (severe) -> top list
+    "pending_ok": 8,            # in review, recent
+    "pending_stalled": 7,       # in review > 30 days (severe)
+    "revoked": 12,              # closed
+    "renewed": 7,               # renewed, healthy
+    "expired_status": 6,        # acknowledged-expired (past end, status EXPIRED)
+}
 
 
 def _iso(d: date) -> str:
     return d.isoformat()
 
 
+def _pick_type(rng: random.Random, weights: dict[str, int]) -> str:
+    types = list(weights)
+    return rng.choices(types, weights=[weights[t] for t in types], k=1)[0]
+
+
+def _input_risk(rng: random.Random, rec_type: str) -> str:
+    """Declared input risk, kept <= type sensitivity so sensitivity stays
+    type-driven (a real analyst could still mark something higher)."""
+    if rec_type == "dev_environment":
+        return rng.choice(["LOW", "LOW", "MEDIUM"])
+    if rec_type == "firewall_rule_open":
+        # A realistic minority of firewall openings are externally-facing and
+        # analyst-flagged HIGH; those raise sensitivity, so a healthy one is
+        # MEDIUM rather than LOW. The rest stay LOW/MEDIUM.
+        return rng.choice(["LOW", "LOW", "MEDIUM", "MEDIUM", "HIGH"])
+    return rng.choice(["MEDIUM", "HIGH"])
+
+
+def _good_just(rng: random.Random, rec_type: str) -> str:
+    return rng.choice(GOOD_JUSTIFICATIONS[rec_type]).format(n=rng.randint(100, 9999))
+
+
+def _rec(rec_type, status, start, end, renewal, justification, rng) -> dict:
+    """Assemble a raw record dict (exception_id is assigned later)."""
+    return {
+        "type": rec_type,
+        "requester": f"USR-{rng.randint(1000, 9999)}",
+        "approver": f"manager-{rng.randint(1, 40):03d}",
+        "justification": justification,
+        "start_date": _iso(start),
+        "end_date": _iso(end),
+        "status": status,
+        "risk_level": _input_risk(rng, rec_type),
+        "renewal_count": renewal,
+    }
+
+
+def _make(profile: str, rng: random.Random) -> dict:
+    """Build one raw record for the given lifecycle profile."""
+    if profile == "healthy":
+        t = _pick_type(rng, TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(10, 150))  # < 180 -> not long
+        # Future expiry; the lower bound dips into the current month so a
+        # realistic handful show up as "expiring this month" on the report.
+        end = EVAL + timedelta(days=rng.randint(8, 300))
+        return _rec(t, "ACTIVE", start, end, rng.randint(1, 3), _good_just(rng, t), rng)
+
+    if profile == "active_vague":
+        t = _pick_type(rng, MINOR_TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(10, 150))
+        end = EVAL + timedelta(days=rng.randint(30, 220))
+        return _rec(t, "ACTIVE", start, end, rng.randint(1, 2),
+                    rng.choice(VAGUE_JUSTIFICATIONS), rng)
+
+    if profile == "active_no_renewal":
+        t = _pick_type(rng, MINOR_TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(95, 175))  # > 90, < 180
+        end = EVAL + timedelta(days=rng.randint(30, 220))
+        return _rec(t, "ACTIVE", start, end, 0, _good_just(rng, t), rng)
+
+    if profile == "active_long_running":
+        t = _pick_type(rng, SEVERE_TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(220, 1500))  # 7mo .. ~4yr
+        end = EVAL + timedelta(days=rng.randint(20, 200))      # still in force
+        return _rec(t, "ACTIVE", start, end, rng.randint(1, 2), _good_just(rng, t), rng)
+
+    if profile == "expired_not_revoked":
+        t = _pick_type(rng, SEVERE_TYPE_WEIGHTS)
+        if rng.random() < 0.6:  # multi-year, badly overdue -> CRITICAL on the top list
+            start = EVAL - timedelta(days=rng.randint(260, 1600))
+            end = EVAL - timedelta(days=rng.randint(30, 250))
+        else:  # recently expired -> HIGH (firewall) / CRITICAL (elevated)
+            start = EVAL - timedelta(days=rng.randint(70, 165))
+            end = EVAL - timedelta(days=rng.randint(10, 45))
+        just = rng.choice(VAGUE_JUSTIFICATIONS) if rng.random() < 0.3 else _good_just(rng, t)
+        return _rec(t, "ACTIVE", start, end, 0, just, rng)
+
+    if profile == "pending_ok":
+        t = _pick_type(rng, TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(2, 25))  # < 30 -> not stalled
+        end = EVAL + timedelta(days=rng.randint(30, 180))
+        return _rec(t, "PENDING", start, end, 0, _good_just(rng, t), rng)
+
+    if profile == "pending_stalled":
+        t = _pick_type(rng, TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(40, 150))  # > 30 -> stalled
+        end = EVAL + timedelta(days=rng.randint(30, 180))
+        return _rec(t, "PENDING", start, end, 0, _good_just(rng, t), rng)
+
+    if profile == "revoked":
+        t = _pick_type(rng, TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(60, 600))
+        end = EVAL + timedelta(days=rng.randint(-120, 120))
+        return _rec(t, "REVOKED", start, end, rng.randint(0, 2), _good_just(rng, t), rng)
+
+    if profile == "renewed":
+        t = _pick_type(rng, TYPE_WEIGHTS)
+        start = EVAL - timedelta(days=rng.randint(120, 600))
+        end = EVAL + timedelta(days=rng.randint(30, 300))
+        return _rec(t, "RENEWED", start, end, rng.randint(1, 3), _good_just(rng, t), rng)
+
+    # expired_status — acknowledged-expired (past end, status EXPIRED)
+    t = _pick_type(rng, TYPE_WEIGHTS)
+    start = EVAL - timedelta(days=rng.randint(120, 900))
+    end = EVAL - timedelta(days=rng.randint(20, 200))
+    return _rec(t, "EXPIRED", start, end, rng.randint(0, 1), _good_just(rng, t), rng)
+
+
+def _exc_00145() -> dict:
+    """The brief's headline case — seeded so the demo detail view shows §4 exactly."""
+    return {
+        "exception_id": "EXC-00145",
+        "type": "admin_access",
+        "requester": "USR-1234",
+        "approver": "manager-001",
+        "justification": "Prod admin to debug payment gateway latency, INC-4471",
+        "start_date": "2025-11-15",
+        "end_date": "2025-12-15",
+        "status": "ACTIVE",
+        "risk_level": "HIGH",
+        "renewal_count": 0,
+    }
+
+
 def generate_records(n: int = 220, *, rng: random.Random | None = None) -> list[dict]:
-    """Generate `n` raw exception dicts with a realistic, lopsided distribution."""
+    """Generate `n` raw exception dicts with a realistic risk distribution.
+
+    Records are built per lifecycle profile (see PROFILE_COUNTS), shuffled, then
+    given sequential ids. EXC-00145 is always present and the profile counts are
+    tuned for ~180 active records with a realistic HIGH/CRITICAL tail.
+    """
     rng = rng or random.Random(42)
-    records: list[dict] = []
 
-    # The brief's headline case — seeded so the demo detail view shows §4 exactly.
-    records.append(
-        {
-            "exception_id": "EXC-00145",
-            "type": "admin_access",
-            "requester": "USR-1234",
-            "approver": "manager-001",
-            "justification": "Prod admin to debug payment gateway latency, INC-4471",
-            "start_date": "2025-11-15",
-            "end_date": "2025-12-15",
-            "status": "ACTIVE",
-            "risk_level": "HIGH",
-            "renewal_count": 0,
-        }
-    )
+    pool: list[dict] = []
+    for profile, count in PROFILE_COUNTS.items():
+        for _ in range(count):
+            pool.append(_make(profile, rng))
+    rng.shuffle(pool)
 
-    # Range extended by one and skipping 145, since EXC-00145 is added above —
-    # this keeps the total at exactly `n` with unique ids.
-    for i in range(2, n + 2):
-        if i == 145:
-            continue
-        exc_id = f"EXC-{i:05d}"
-        rec_type = rng.choices(
-            TYPES, weights=[22, 28, 14, 20, 16], k=1  # admin & firewall most common
-        )[0]
-
-        # ~82% active so we land near ~180 active out of 220 (spec §6).
-        status = rng.choices(
-            STATUSES, weights=[82, 6, 6, 3, 3], k=1
-        )[0]
-
-        # Pick a lifecycle "shape" to guarantee interesting cases exist.
-        shape = rng.choices(
-            ["healthy", "expired_not_revoked", "long_running", "stalled", "vague"],
-            weights=[40, 22, 16, 10, 12],
-            k=1,
-        )[0]
-
-        renewal_count = rng.choice([0, 0, 0, 1, 2])
-        risk_level = rng.choice(RISK_LEVELS)
-        justification = rng.choice(GOOD_JUSTIFICATIONS[rec_type]).format(
-            n=rng.randint(100, 9999)
-        )
-
-        if shape == "healthy":
-            # Keep the rolled status (most are ACTIVE, some EXPIRED/REVOKED/RENEWED),
-            # giving realistic variety and landing active near ~180 of 220.
-            start = EVAL - timedelta(days=rng.randint(10, 120))
-            end = EVAL + timedelta(days=rng.randint(30, 200))
-        elif shape == "expired_not_revoked":
-            # Expired weeks-to-months ago but still marked ACTIVE.
-            start = EVAL - timedelta(days=rng.randint(200, 520))
-            end = EVAL - timedelta(days=rng.randint(20, 200))
-            status = "ACTIVE"
-        elif shape == "long_running":
-            # Multi-year waiver, still active.
-            start = EVAL - timedelta(days=rng.randint(500, 1500))
-            end = EVAL + timedelta(days=rng.randint(15, 120))
-            status = "ACTIVE"
-        elif shape == "stalled":
-            # Pending review that has sat well past 30 days.
-            start = EVAL - timedelta(days=rng.randint(45, 180))
-            end = EVAL + timedelta(days=rng.randint(30, 120))
-            status = "PENDING"
-        else:  # vague (keep rolled status for variety)
-            start = EVAL - timedelta(days=rng.randint(30, 300))
-            end = EVAL + timedelta(days=rng.randint(-60, 120))
-            justification = rng.choice(VAGUE_JUSTIFICATIONS)
-
-        records.append(
-            {
-                "exception_id": exc_id,
-                "type": rec_type,
-                "requester": f"USR-{rng.randint(1000, 9999)}",
-                "approver": f"manager-{rng.randint(1, 40):03d}",
-                "justification": justification,
-                "start_date": _iso(start),
-                "end_date": _iso(end),
-                "status": status,
-                "risk_level": risk_level,
-                "renewal_count": renewal_count,
-            }
-        )
+    records: list[dict] = [_exc_00145()]
+    next_id = 2
+    for rec in pool[: n - 1]:
+        if next_id == 145:  # reserved for EXC-00145
+            next_id += 1
+        rec["exception_id"] = f"EXC-{next_id:05d}"
+        next_id += 1
+        records.append(rec)
 
     return records
 

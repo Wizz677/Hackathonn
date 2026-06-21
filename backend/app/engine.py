@@ -37,8 +37,12 @@ DEFAULT_EVALUATION_DATE = date(2026, 4, 15)
 RISK_ORDER = {"LOW": 0, "MEDIUM": 1, "HIGH": 2, "CRITICAL": 3}
 RISK_BY_RANK = {v: k for k, v in RISK_ORDER.items()}
 
-# Base inherent risk per exception type (spec §3a).
-TYPE_BASE_RISK = {
+# Inherent *sensitivity* per exception type (spec §3a). This expresses how
+# sensitive the underlying resource is — NOT the computed risk. Type sensitivity
+# sets a ceiling of concern and only pushes the final computed risk UP when
+# lifecycle alerts are present; a healthy exception sits one tier BELOW its
+# sensitivity (see `escalate_risk`). So type alone never forces a HIGH result.
+TYPE_SENSITIVITY = {
     "admin_access": "HIGH",
     "encryption_waiver": "HIGH",
     "data_access": "HIGH",
@@ -47,7 +51,28 @@ TYPE_BASE_RISK = {
 }
 
 # Canonical set of valid types (used for normalization / validation).
-VALID_TYPES = set(TYPE_BASE_RISK)
+VALID_TYPES = set(TYPE_SENSITIVITY)
+
+# Alert classification used by risk escalation (spec §3c).
+#  - ANOMALY_CODES: any genuine lifecycle / hygiene problem. ELEVATED_PRIVILEGE
+#    is intentionally excluded — it is a permanent sensitivity marker for admin
+#    access, not a sign that anything is wrong, so it must not block "healthy".
+#  - SEVERE_CODES: the subset representing a real expiry / duration / review
+#    failure, as opposed to a softer hygiene issue (e.g. vague justification).
+ANOMALY_CODES = {
+    "EXPIRED_NOT_REVOKED",
+    "OVERDUE_RENEWAL",
+    "LONG_DURATION",
+    "NO_RENEWAL_90_DAYS",
+    "STALLED_REVIEW",
+    "VAGUE_JUSTIFICATION",
+}
+SEVERE_CODES = {
+    "EXPIRED_NOT_REVOKED",
+    "OVERDUE_RENEWAL",
+    "LONG_DURATION",
+    "STALLED_REVIEW",
+}
 
 # Valid lifecycle statuses (spec §2).
 VALID_STATUSES = {"ACTIVE", "EXPIRED", "PENDING", "REVOKED", "RENEWED"}
@@ -197,10 +222,14 @@ class NormalizedRecord:
 # ---------------------------------------------------------------------------
 
 
-def base_risk(rec: NormalizedRecord) -> str:
-    """Inherent risk = max(type base, declared input risk_level) — spec §3a."""
-    type_base = TYPE_BASE_RISK.get(rec.type, "LOW")
-    return max_risk(type_base, rec.input_risk_level)
+def sensitivity(rec: NormalizedRecord) -> str:
+    """Inherent sensitivity = max(type sensitivity, declared input risk) — §3a.
+
+    This is how sensitive the resource is, deliberately NOT the computed risk:
+    lifecycle health decides where the final risk actually lands (see §3c).
+    """
+    type_sens = TYPE_SENSITIVITY.get(rec.type, "LOW")
+    return max_risk(type_sens, rec.input_risk_level)
 
 
 def is_expired(rec: NormalizedRecord, eval_date: date) -> bool:
@@ -306,26 +335,60 @@ def escalate_risk(
     eval_date: date,
     alert_codes: set[str],
 ) -> str:
-    """Compute the final computed_risk_level from base risk + alerts (spec §3c)."""
-    computed = base_risk(rec)
+    """Compute the final risk level from sensitivity + lifecycle health (§3c).
+
+    The model balances *how sensitive* the resource is against *how healthy* its
+    lifecycle is:
+
+      * Type sensitivity sets a ceiling of concern but never the floor — a
+        HEALTHY exception lands one tier BELOW its sensitivity (a healthy admin
+        is MEDIUM, a healthy firewall/dev is LOW). Type alone never forces HIGH.
+      * Lifecycle anomalies push the risk back UP toward, and past, that tier.
+      * CRITICAL is reserved for a high-sensitivity / elevated-privilege
+        exception that is ALSO expired-not-revoked or badly overdue, or for any
+        record on which three or more alerts stack.
+    """
+    s_rank = RISK_ORDER[sensitivity(rec)]
+    high_sensitivity = s_rank >= RISK_ORDER["HIGH"]
+    elevated = "ELEVATED_PRIVILEGE" in alert_codes
+
     expired = is_expired(rec, eval_date)
     overdue_months = (
         months_between(rec.end_date, eval_date) if expired and rec.end_date else 0
     )
+    badly_overdue = overdue_months >= 3  # ~90+ days past expiry
+    expired_not_revoked = "EXPIRED_NOT_REVOKED" in alert_codes
 
-    # Escalate to CRITICAL when elevated privilege combines with an expiry/overdue
-    # problem, OR when three or more alerts stack on one record.
-    elevated = "ELEVATED_PRIVILEGE" in alert_codes
-    expired_alert = "EXPIRED_NOT_REVOKED" in alert_codes
-    if elevated and (expired_alert or overdue_months >= 3):
+    # Genuine problems only (ELEVATED_PRIVILEGE excluded — see ANOMALY_CODES).
+    anomalies = alert_codes & ANOMALY_CODES
+    severe = bool(alert_codes & SEVERE_CODES)
+
+    # --- CRITICAL ----------------------------------------------------------
+    if (high_sensitivity or elevated) and (expired_not_revoked or badly_overdue):
         return "CRITICAL"
     if len(alert_codes) >= 3:
         return "CRITICAL"
 
-    # Otherwise an expired-not-revoked record is at least HIGH; else base risk.
-    if expired_alert:
-        return max_risk(computed, "HIGH")
-    return computed
+    # --- Closed / revoked: no live exposure --------------------------------
+    if rec.status == "REVOKED":
+        return "LOW"
+
+    # --- Healthy / within policy: one tier BELOW sensitivity ---------------
+    if not anomalies:
+        return RISK_BY_RANK[max(s_rank - 1, 0)]
+
+    # --- Anomalous but not critical: raise from the healthy baseline -------
+    if severe:
+        # Real expiry / duration / review failure: high-sensitivity -> HIGH,
+        # lower-sensitivity -> at least MEDIUM.
+        score = min(s_rank + 1, RISK_ORDER["HIGH"])
+    else:
+        # Softer hygiene issue (vague justification, unrenewed-90d): nudge up to
+        # at most MEDIUM.
+        score = min(s_rank, RISK_ORDER["MEDIUM"])
+    if len(anomalies) >= 2:
+        score = min(score + 1, RISK_ORDER["HIGH"])
+    return RISK_BY_RANK[score]
 
 
 # ---------------------------------------------------------------------------

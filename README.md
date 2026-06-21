@@ -26,6 +26,18 @@ fixed **evaluation date** (never the system clock) and produces:
 - a single actionable **recommendation**,
 - **compliance tags** (NIST 800-53, GDPR, CIS) and **CIA-triad** tags.
 
+**Risk = sensitivity × lifecycle health.** Exception type sets *inherent
+sensitivity* (admin / encryption / data = high, firewall = medium, dev = low),
+but sensitivity alone never forces a HIGH result. A **healthy** exception
+(active, within expiry, recently reviewed, justified) lands one tier *below* its
+sensitivity — a healthy admin is MEDIUM, a healthy firewall/dev is LOW. Sensitivity
+only drives the risk back *up* when lifecycle alerts appear (expired-not-revoked,
+overdue, long-running, stalled). **CRITICAL** is reserved for a high-sensitivity /
+elevated-privilege exception that is also expired-not-revoked or badly overdue,
+or for ≥3 stacked alerts. Over the seeded portfolio (~180 active) this yields a
+realistic spread — roughly **42% LOW, 43% MEDIUM, 15% HIGH/CRITICAL** — instead
+of every sensitive type defaulting to HIGH.
+
 Everything else — dashboard, registry, detail, upload, portfolio report — is a
 thin presentation layer over that engine.
 

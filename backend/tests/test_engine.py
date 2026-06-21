@@ -128,17 +128,65 @@ def test_exc_002_stalled_review():
 # ---------------------------------------------------------------------------
 
 
-def test_base_risk_by_type():
-    assert engine.TYPE_BASE_RISK["admin_access"] == "HIGH"
-    assert engine.TYPE_BASE_RISK["firewall_rule_open"] == "MEDIUM"
-    assert engine.TYPE_BASE_RISK["dev_environment"] == "LOW"
+def test_type_sensitivity_scale():
+    assert engine.TYPE_SENSITIVITY["admin_access"] == "HIGH"
+    assert engine.TYPE_SENSITIVITY["firewall_rule_open"] == "MEDIUM"
+    assert engine.TYPE_SENSITIVITY["dev_environment"] == "LOW"
 
 
-def test_base_risk_takes_max_of_type_and_input():
+def test_sensitivity_takes_max_of_type_and_input():
     rec = engine.NormalizedRecord.from_raw(
         {"type": "dev_environment", "risk_level": "HIGH"}
     )
-    assert engine.base_risk(rec) == "HIGH"
+    assert engine.sensitivity(rec) == "HIGH"
+
+
+def test_type_alone_does_not_force_high_risk():
+    """A healthy high-sensitivity exception is one tier BELOW its sensitivity."""
+    healthy_admin = {
+        "exception_id": "EXC-HA",
+        "type": "admin_access",
+        "justification": "Scoped break-glass admin for INC-2210, reviewed weekly",
+        "start_date": "2026-03-01",
+        "end_date": "2026-07-01",
+        "status": "ACTIVE",
+        "renewal_count": 1,
+    }
+    out = analyze_record(healthy_admin, EVAL)
+    assert out["computed_risk_level"] == "MEDIUM"  # not HIGH
+    assert out["alerts"] == ["ELEVATED_PRIVILEGE: Admin access should be strictly temporary"]
+
+
+def test_healthy_firewall_is_low():
+    healthy_fw = {
+        "exception_id": "EXC-HF",
+        "type": "firewall_rule_open",
+        "justification": "Open 8443 to monitoring collector for migration window CR-77",
+        "start_date": "2026-03-10",
+        "end_date": "2026-06-10",
+        "status": "ACTIVE",
+        "renewal_count": 1,
+    }
+    out = analyze_record(healthy_fw, EVAL)
+    assert out["computed_risk_level"] in {"LOW", "MEDIUM"}
+    assert out["alerts"] == []
+
+
+def test_severe_anomaly_raises_high_sensitivity_to_high():
+    """An expired-not-revoked firewall (medium sensitivity) lands HIGH."""
+    row = {
+        "exception_id": "EXC-EF",
+        "type": "firewall_rule_open",
+        "justification": "Vendor egress rule for partner batch transfer window",
+        "start_date": "2026-01-20",  # < 180 days -> no LONG_DURATION
+        "end_date": "2026-03-20",  # expired ~26 days
+        "status": "ACTIVE",
+        "renewal_count": 0,
+    }
+    out = analyze_record(row, EVAL)
+    codes = {a.split(":")[0] for a in out["alerts"]}
+    assert "EXPIRED_NOT_REVOKED" in codes and "LONG_DURATION" not in codes
+    assert out["computed_risk_level"] == "HIGH"
 
 
 def test_months_between():
